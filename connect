@@ -376,7 +376,7 @@ connect_specific() {
 
 # Connect to a random xinu server
 connect_random() {
-    available_servers=$(cs-status -c $MODE | awk 'NR>1 /user= [ ]+time= / {print $1}')
+    available_servers=$(cs-status -c $MODE | awk '/user= [ ]+time= / {print $1}')
 
     blacklisted_servers=()
     [[ -f "$BLACKLIST_FILE" ]] && blacklisted_servers=($(cat "$BLACKLIST_FILE"))
