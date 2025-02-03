@@ -60,6 +60,11 @@ The **CS-CONNECT** script is a tool that helps you:
 
 
 ## 🌟 Pro Tips
+```Bash
+vim/nano/nvim ~/.bashrc
+OR
+vim/nano/nvim ~/.zshrc
+```
 
 - **Alias the Script**: To save time, create an alias in your `.bashrc` or `.zshrc`:
   ```bash
