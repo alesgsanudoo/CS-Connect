@@ -1,10 +1,21 @@
 #!/bin/bash
 
+
+# Color Settings
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[1;33m"
+BLUE="\033[0;34m"
+BOLD_BLUE="\033[1;34m"
+BOLD="\033[1m"
+NC="\033[0m"  # No Color
+
+
 # Configuration/files
 BLACKLIST_FILE="$HOME/.cscblacklist"
 CONFIG_FILE="$HOME/.csconfig"
 MODE="quark"
-PREFIX="CS-CONNECT"
+PREFIX="${BOLD_BLUE}CS-CONNECT${NC}"
 SCRIPT_NAME=$(basename "$0")
 SERVER_PREFIX="galileo"
 BROKEN_SERVERS_URL="https://www.cs.purdue.edu/homes/deng254/ta-notes.html"
@@ -35,18 +46,18 @@ load_config
 
 # Pull broken servers
 pullBrokenServers() {
-    echo "${PREFIX} - Pulling broken servers from TA notes..."
+    echo -e "${PREFIX} ${BOLD}- ${NC}Pulling broken servers from TA notes... ${NC}"
     
     local html
     if ! html=$(curl -sfL "$BROKEN_SERVERS_URL"); then
-        echo "${PREFIX} - Error: Failed to pull TA notes from $BROKEN_SERVERS_URL" >&2
+        echo -e "${PREFIX} ${BOLD}- ${RED}Error:${NC} Failed to pull TA notes from ${YELLOW} $BROKEN_SERVERS_URL ${NC}" >&2
         return 1
     fi
     local servers=$(echo "$html" | grep -i "Broken Backends" -A3 | grep -Eo 'galileo[0-9]+' | sort -u)
 
     if [[ -z "$servers" ]]; then
-        echo "${PREFIX} - No broken servers found in TA notes..." >&2
-        return 1
+        echo -e "${PREFIX} ${BOLD}- ${NC} No broken servers found in TA notes... ${NC}" >&2
+        return 1$
     fi
 
     # Add valid servers to blacklist
@@ -56,15 +67,15 @@ pullBrokenServers() {
             if ! grep -qxF "$server" "$BLACKLIST_FILE" 2>/dev/null; then
                 echo "$server" >> "$BLACKLIST_FILE"
                 ((added++))
-                echo "${PREFIX} - Auto-added broken server: $server"
+                echo -e "${PREFIX} ${BOLD} - ${NC} Auto-added broken server: ${REED}$server ${NC}"
             fi
         fi
     done
 
     if [[ $added -gt 0 ]]; then
-        echo "${PREFIX} - Added $added new broken servers to blacklist"
+        echo -e "${PREFIX} ${BOLD}- ${NC} Added ${RED}$added ${NC}new broken servers to blacklist ${NC}"
     else
-        echo "${PREFIX} - No new broken servers found..."
+        echo -e "${PREFIX} ${BOLD}- ${GREEN}No new broken servers found... ${NC}"
     fi
 }
 
@@ -79,20 +90,20 @@ set_config() {
     case $key in
         REFRESH_BROKEN)
             if [[ "$upperValue" != "TRUE" && "$upperValue" != "FALSE" ]]; then
-                echo "${PREFIX} - Error: $key must be TRUE or FALSE" >&2
+                echo -e "${PREFIX} ${BOLD}- ${RED}Error: key must be TRUE or FALSE${NC}" >&2
                 exit 1
             fi
             value="\"$upperValue\""
             ;;
         SERVER_PREFIX|BROKEN_SERVERS_URL)
             if [[ -z "$value" ]]; then
-                echo "${PREFIX} - Error: $key cannot be empty" >&2
+                echo -e "${PREFIX} ${BOLD}- ${RED}Error: key cannot be empty${NC}" >&2
                 exit 1
             fi
             value="\"$value\""
             ;;
         *)
-            echo "${PREFIX} - Error: Unknown configuration key '$key'" >&2
+            echo -e "${PREFIX} ${BOLD}- ${RED}Error: Unknown configuration key '$key'${NC}" >&2
             exit 1
             ;;
     esac
@@ -104,26 +115,26 @@ set_config() {
         echo "$key=$value" >> "$CONFIG_FILE"
     fi
     
-    echo "${PREFIX} - Updated config: $key=${value//\"/}"
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Updated config: $key=${value//\"/} ${NC}"
     load_config  
 }
 
 # Display current config
 config_disp() {
-    echo "${PREFIX} - Current Configuration:"
-    echo "--------------------------------"
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Current Configuration:${NC}"
+    echo -e "${YELLOW}--------------------------------${NC}"
     cat "$CONFIG_FILE"
-    echo "--------------------------------"
-    echo "Config location: $CONFIG_FILE"
+    echo -e "${YELLOW}--------------------------------${NC}"
+    echo -e "${NC}Config location: ${RED}$CONFIG_FILE"
 }
 
 
 # Reset config
 reset_config() {
     rm -f "$CONFIG_FILE"
-    echo "${PREFIX} - Configuration file removed. Creating default config..."
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Configuration file removed. Creating default config...${NC}"
     load_config
-    echo "${PREFIX} - Configuration has been reset to default values."
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Configuration has been reset to default values.${NC}"
 }
 
 # Get all servers
@@ -133,8 +144,9 @@ SERVER_NUMBERS=($(printf '%s\n' "${CACHED_SERVERS[@]}" | sed "s/^${SERVER_PREFIX
 
 # Help
 help_disp() {
+
     cat <<EOF
-${PREFIX} - Connect to available xinu server randomly
+CS-CONNECT - Connect to available xinu server randomly
 
 USAGE:
     ${SCRIPT_NAME} [OPTIONS] [SERVER]
@@ -203,7 +215,7 @@ EOF
 # Range
 getServerRange() {
     if [ ${#SERVER_NUMBERS[@]} -eq 0 ]; then
-        echo "No servers available"
+        echo -e "${RED}No servers available${NC}"
         return
     fi
     
@@ -221,26 +233,26 @@ getServerRange() {
 
 clear_blacklist() {
     rm -rf $BLACKLIST_FILE
-    echo "${PREFIX} - Blacklist cleared..."
+    echo -e "${PREFIX} {BOLD}- ${GREEN}Blacklist cleared...${NC}"
 }
 
 # Display blacklist list
 display_blacklist() {
-    echo "${PREFIX} - Blacklist List"
+    echo -e "${PREFIX} ${BOLD}- ${YELLOW}Blacklist List${NC}"
     if [[ -f "$BLACKLIST_FILE" && -s "$BLACKLIST_FILE" ]]; then
         cat "$BLACKLIST_FILE"
     else
-        echo "No servers in blacklist"
+        echo -e "${GREEN}No servers in blacklist ${NC}"
     fi
     echo ""
-    echo "${PREFIX} - Manage blacklist with:"
-    echo "  ${SCRIPT_NAME} -a SERVER..."
-    echo "  ${SCRIPT_NAME} -r SERVER..."
-    echo "  ${SCRIPT_NAME} -c clear"
+    echo -e "${PREFIX} ${BOLD}- ${YELLOW}Manage blacklist with:${NC}"
+    echo -e "  ${SCRIPT_NAME} ${BOLD}-a SERVER...${NC}"
+    echo -e "  ${SCRIPT_NAME} ${BOLD}-r SERVER...${NC}"
+    echo -e "  ${SCRIPT_NAME} ${BOLD}-c clear${NC}"
 }
 
 display_all() {
-    echo "${PREFIX} - ENTIRE Server List"
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}ENTIRE Server List${NC}"
     cs-status -c $MODE 
 }
 
@@ -261,11 +273,11 @@ checkServerName() {
     local server=$1
     if ! printf '%s\n' "${CACHED_SERVERS[@]}" | grep -qxF "$server"; then
         local range=$(getServerRange)
-        echo "${PREFIX} - Error: Invalid server '$1'" >&2
+        echo -e "${PREFIX} ${BOLD}- ${RED}Error: Invalid server '$1'${NC}" >&2
         if [[ $1 =~ ^[0-9]+$ ]]; then
-            echo "Valid numeric range: ${range}" >&2
+            echo -e "${RED}Valid numeric range: ${range}${NC}" >&2
         else
-            echo "Valid server format: ${SERVER_PREFIX}${range}" >&2
+            echo -e "${RED}Valid server format: ${SERVER_PREFIX}${range} ${NC}" >&2
         fi
         return 1
     fi
@@ -283,25 +295,25 @@ add_to_blacklist() {
         # Convert to galileo + number
         if [[ $input =~ ^[0-9]+$ ]]; then
             server="${SERVER_PREFIX}${input}"
-            echo "${PREFIX} - Converting number '${input}' as '${server}'"
+            echo -e "${PREFIX} ${BOLD}- ${Green}Converting number '${input}' as '${server}'${NC}"
         fi
 
         if ! printf '%s\n' "${CACHED_SERVERS[@]}" | grep -qxF "$server"; then
             local range=$(getServerRange)
-            echo "${PREFIX} - Error: Invalid server '$1'" >&2
+            echo -e "${PREFIX} ${BOLD}- ${RED}Error: Invalid server '$1'${NC}" >&2
             if [[ $1 =~ ^[0-9]+$ ]]; then
-                echo "Valid numeric range: ${range}" >&2
+                echo -e "${RED}Valid numeric range: ${range}${NC}" >&2
             else
-                echo "Valid server format: ${SERVER_PREFIX}${range}" >&2
+                echo -e "${RED}Valid server format: ${SERVER_PREFIX}${range}${NC}" >&2
             fi
             exit 1
         fi
 
         if ! grep -qxF "$server" "$BLACKLIST_FILE" 2>/dev/null; then
             echo "$server" >> "$BLACKLIST_FILE"
-            echo "${PREFIX} - Added $server to blacklist"
+            echo -e "${PREFIX} ${BOLD}- ${GREEN}Added $server to blacklist${NC}"
         else
-            echo "${PREFIX} - $server is already in blacklist"
+            echo -e "${PREFIX} ${BOLD}- ${RED}$server is already in blacklist${NC}"
         fi
     done
 }
@@ -315,25 +327,25 @@ remove_from_blacklist() {
         # Convert to galileo + number
         if [[ $input =~ ^[0-9]+$ ]]; then
             server="${SERVER_PREFIX}${input}"
-            echo "${PREFIX} - Converting number '${input}' as '${server}'"
+            echo -e "${PREFIX} ${BOLD}- ${GREEN}Converting number '${input}' as '${server}'${NC}"
         fi
 
         if ! printf '%s\n' "${CACHED_SERVERS[@]}" | grep -qxF "$server"; then
             local range=$(getServerRange)
-            echo "${PREFIX} - Error: Invalid server '$1'" >&2
+            echo -e "${PREFIX} ${BOLD}- ${RED}Error: Invalid server '$1'${NC}" >&2
             if [[ $1 =~ ^[0-9]+$ ]]; then
-                echo "Valid numeric range: ${range}" >&2
+                echo -e "${RED}Valid numeric range: ${range}${NC}" >&2
             else
-                echo "Valid server format: ${SERVER_PREFIX}${range}" >&2
+                echo -e "${RED}Valid server format: ${SERVER_PREFIX}${range}${NC}" >&2
             fi
             exit 1
         fi
 
         if grep -qxF "$server" "$BLACKLIST_FILE" 2>/dev/null; then
             sed -i "/^$server$/d" "$BLACKLIST_FILE"
-            echo "${PREFIX} - Removed $server from blacklist"
+            echo -e "${PREFIX} ${BOLD}- ${RED}Removed $server from blacklist${NC}"
         else
-            echo "${PREFIX} - $server is not in blacklist"
+            echo -e "${PREFIX} ${BOLD}- ${RED}$server is not in blacklist${NC}"
         fi
     done
 }
@@ -347,30 +359,30 @@ connect_specific() {
     # Convert to galileo + number
     if [[ $input =~ ^[0-9]+$ ]]; then
         server="${SERVER_PREFIX}${input}"
-        echo "${PREFIX} - Converting number '${input}' as '${server}'"
+        echo -e "${PREFIX} ${BOLD}- ${GREEN}Converting number '${input}' as '${server}'${NC}"
     fi
 
     if ! isValid "$server"; then
-        echo "${PREFIX} - Error: Invalid server '${input}'" >&2 
+        echo -e "${PREFIX} ${BOLD}- ${GREEN}Error: Invalid server '${input}'${NC}" >&2 
         local range=$(getServerRange)
         if [[ $input =~ ^[0-9]+$ ]]; then
-            echo "Valid numeric range: ${range}" >&2
+            echo -e "${RED}Valid numeric range: ${range}${NC}" >&2
         else
-            echo "Valid server format: ${SERVER_PREFIX}${range}" >&2
+            echo -e "${RED}Valid server format: ${SERVER_PREFIX}${range}{NC}" >&2
         fi
         exit 1
     fi
 
     if ! isAvailable "$server"; then
-        echo "${PREFIX} - Error: $server is not available" >&2
+        echo -e "${PREFIX} ${BOLD}- ${RED}Error: $server is not available${NC}" >&2
         exit 1
     fi
     
     if grep -qxF "$server" "$BLACKLIST_FILE" 2>/dev/null; then
-        echo "${PREFIX} - WARNING: $server is in blacklist but connecting anyway"
+        echo -e "${PREFIX} ${BOLD}- ${YELLOW}WARNING: $server is in blacklist but connecting anyway${NC}"
     fi
     
-    echo "${PREFIX} - Connecting to $server"...
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Connecting to $server...${NC}"
     cs-console "$server"
 }
 
@@ -389,12 +401,12 @@ connect_random() {
     done
 
     if [[ ${#filtered_servers[@]} -eq 0 ]]; then
-        echo "${PREFIX} - No available servers"
+        echo -e "${PREFIX} ${BOLD}- ${RED}No available servers${NC}"
         exit 1
     fi
 
     selected_server=${filtered_servers[$RANDOM % ${#filtered_servers[@]}]}
-    echo "${PREFIX} - Connecting to $selected_server"
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Connecting to $selected_server...${NC}"
     cs-console "$selected_server"
 }
 
@@ -422,7 +434,7 @@ case "$1" in
         help_disp
         ;;
     -v|--version)
-        echo "${PREFIX} v1.0 - ${SCRIPT_NAME}"
+        echo -e "${PREFIX} ${YELLOW}v0.1 - ${SCRIPT_NAME}${NC}"
         ;;
     -cg|--config)
         config_disp
@@ -433,7 +445,7 @@ case "$1" in
             IFS='=' read -r key value <<< "$1"
             set_config "$key" "$value"
         else
-            echo "${PREFIX} - Invalid format: use KEY=VALUE" >&2
+            echo -e "${PREFIX} ${BOLD}- ${RED}Invalid format: use KEY=VALUE${NC}" >&2
             exit 1
         fi
         ;;
@@ -449,7 +461,7 @@ case "$1" in
         ;;
     *)
         if [[ "$1" == -* ]]; then
-            echo "${PREFIX} - Invalid option: $1" >&2
+            echo -e "${PREFIX} ${BOLD}- ${RED}Invalid option: $1 ${NC}" >&2
             help_disp
             exit 1
         else
