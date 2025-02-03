@@ -233,7 +233,7 @@ getServerRange() {
 
 clear_blacklist() {
     rm -rf $BLACKLIST_FILE
-    echo -e "${PREFIX} {BOLD}- ${GREEN}Blacklist cleared...${NC}"
+    echo -e "${PREFIX} ${BOLD}- ${GREEN}Blacklist cleared...${NC}"
 }
 
 # Display blacklist list
