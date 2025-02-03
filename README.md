@@ -47,7 +47,7 @@ The **CS-CONNECT** script is a tool that helps you:
    ```
 3. Clone the script or copy the code into a file named `connect`
    ```bash
-   wget https://raw.githubusercontent.com/alesgsanudoo/CS-Connect/7610098ca2ec71bc717d97cdec90486b88a7775a/connect
+   wget https://raw.githubusercontent.com/alesgsanudoo/CS-Connect/refs/heads/master/connect
    ```
 4. Make the script executable
    ```bash
