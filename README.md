@@ -30,6 +30,7 @@ The **CS-CONNECT** script is a tool that helps you:
 ## Features 🎨
 
 - **Random Server Connection**: Don't waste time picking a server, let the script do it for you!
+- **Automatic filling**: The script will download your xinu.xbin and power machine for you.
 - **Blacklist Management**: Add or remove servers from your blacklist.
 - **Auto-Refresh Broken Servers**: Stay updated with the latest list of broken servers from TA notes.
 
@@ -89,19 +90,19 @@ Here are some examples on how to use it:
 
 ### Connect to a Specific Server:
 ```bash
-./connect galileo10
+./connect galileo105
 OR
-./connect 10
+./connect 105
 ```
 
 ### Add a Server to Blacklist:
 ```bash
-./connect  -a galileo5
+./connect  -a galileo105
 ```
 
 ### Remove a Server from Blacklist:
 ```bash
-./connect  -r galileo5
+./connect  -r galileo105
 ```
 
 ### View All Servers:
