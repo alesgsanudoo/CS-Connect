@@ -4,6 +4,8 @@ Welcome to **CS-CONNECT**, a simple bash script for managing and connecting to P
 
 PD: I did this project for fun and because I was bored and didn't want to do my network homework :)
 
+
+<img align="center" alt="Coding" width="1000" src="https://raw.githubusercontent.com/alesgsanudoo/alesgsanudoo/refs/heads/main/images/gifs/cs-connect/cc-command.gif">
 ---
 
 ## Table of Contents 📑
