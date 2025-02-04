@@ -67,13 +67,13 @@ pullBrokenServers() {
             if ! grep -qxF "$server" "$BLACKLIST_FILE" 2>/dev/null; then
                 echo "$server" >> "$BLACKLIST_FILE"
                 ((added++))
-                echo -e "${PREFIX} ${BOLD} - ${NC} Auto-added broken server: ${REED}$server ${NC}"
+                echo -e "${PREFIX} ${BOLD} - ${NC}Auto-added broken server: ${REED}$server ${NC}"
             fi
         fi
     done
 
     if [[ $added -gt 0 ]]; then
-        echo -e "${PREFIX} ${BOLD}- ${NC} Added ${RED}$added ${NC}new broken servers to blacklist ${NC}"
+        echo -e "${PREFIX} ${BOLD}- ${NC}Added ${RED}$added ${NC}new broken servers to blacklist ${NC}"
     else
         echo -e "${PREFIX} ${BOLD}- ${GREEN}No new broken servers found... ${NC}"
     fi
