@@ -474,8 +474,8 @@ connect_random() {
         #log_user 0
         set timeout 20
 
-        spawn cs-console $server 
-        expect \"*connection '$server', class '$MODE', host 'xinuserver.cs.purdue.edu'*\"
+        spawn cs-console $selected_server 
+        expect \"*connection '$selected_server', class '$MODE', host 'xinuserver.cs.purdue.edu'*\"
     
         send \"\x00\"
         after 500
@@ -491,7 +491,7 @@ connect_random() {
 
         expect \"Using file: xinu.xbin\"
 
-        expect \"connection '${server}-dl', class 'DOWNLOAD', host 'xinuserver.cs.purdue.edu'\"
+        expect \"connection '${selected_server}-dl', class 'DOWNLOAD', host 'xinuserver.cs.purdue.edu'\"
         expect \"cp-download complete\"
 
         send \"\x00\"
@@ -502,7 +502,7 @@ connect_random() {
         send \"p\r\"
         after 500
 
-        expect \"connection '${server}-pc', class 'POWERCYCLE', host 'xinuserver.cs.purdue.edu'\"
+        expect \"connection '${selected_server}-pc', class 'POWERCYCLE', host 'xinuserver.cs.purdue.edu'\"
 
         interact
     "
