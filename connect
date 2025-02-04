@@ -56,7 +56,7 @@ pullBrokenServers() {
     local servers=$(echo "$html" | grep -i "Broken Backends" -A3 | grep -Eo 'galileo[0-9]+' | sort -u)
 
     if [[ -z "$servers" ]]; then
-        echo -e "${PREFIX} ${BOLD}- ${NC}No broken servers found in TA notes...${NC}" >&2
+        echo -e "${PREFIX} ${BOLD}- ${NC} No broken servers found in TA notes... ${NC}" >&2
         return 1$
     fi
 
@@ -67,15 +67,15 @@ pullBrokenServers() {
             if ! grep -qxF "$server" "$BLACKLIST_FILE" 2>/dev/null; then
                 echo "$server" >> "$BLACKLIST_FILE"
                 ((added++))
-                echo -e "${PREFIX} ${BOLD} - ${NC}Auto-added broken server: ${REED}$server ${NC}"
+                echo -e "${PREFIX} ${BOLD} - ${NC} Auto-added broken server: ${REED}$server ${NC}"
             fi
         fi
     done
 
     if [[ $added -gt 0 ]]; then
-        echo -e "${PREFIX} ${BOLD}- ${NC}Added ${RED}$added ${NC}new broken servers to blacklist ${NC}"
+        echo -e "${PREFIX} ${BOLD}- ${NC} Added ${RED}$added ${NC}new broken servers to blacklist ${NC}"
     else
-        echo -e "${PREFIX} ${BOLD}- ${GREEN}No new broken servers found...${NC}"
+        echo -e "${PREFIX} ${BOLD}- ${GREEN}No new broken servers found... ${NC}"
     fi
 }
 
@@ -383,7 +383,56 @@ connect_specific() {
     fi
     
     echo -e "${PREFIX} ${BOLD}- ${GREEN}Connecting to $server...${NC}"
-    cs-console "$server"
+    current_dir="${PWD##*/}"
+    if [ "$current_dir" != "compile" ]; then
+        echo -e "${PREFIX} ${BOLD}- ${RED}Not in directory compile...${NC}"
+        exit 1
+    fi
+
+    if [ -f "xinu.xbin" ]; then
+        echo -e "${PREFIX} ${BOLD}- ${GREEN}File ${BOLD}'xinu.xbin' ${GREEN}exists in $(pwd).${NC}"
+    else
+        echo -e "${PREFIX} ${BOLD}- ${RED}Error: ${BOLD}'xinu.xbin' ${RED}not found in $(pwd).${NC}"
+        exit 1
+    fi
+    echo -e "${PREFIX} ${BOLD}- ${RED}Running autofill...${NC}"
+    expect -c "
+        #log_user 0
+        set timeout 20
+
+        spawn cs-console $server 
+        expect \"*connection '$server', class '$MODE', host 'xinuserver.cs.purdue.edu'*\"
+    
+        send \"\x00\"
+        after 500
+
+        expect \"(command-mode)*\"
+
+        send \"d\r\"
+        after 500
+
+        expect \"file:\"
+        send \"xinu.xbin\r\"
+        after 500
+
+        expect \"Using file: xinu.xbin\"
+
+        expect \"connection '${server}-dl', class 'DOWNLOAD', host 'xinuserver.cs.purdue.edu'\"
+        expect \"cp-download complete\"
+
+        send \"\x00\"
+        after 500
+
+        expect \"(command-mode)*\"
+
+        send \"p\r\"
+        after 500
+
+        expect \"connection '${server}-pc', class 'POWERCYCLE', host 'xinuserver.cs.purdue.edu'\"
+
+        interact
+    "
+    exit 0;
 }
 
 # Connect to a random xinu server
@@ -407,7 +456,57 @@ connect_random() {
 
     selected_server=${filtered_servers[$RANDOM % ${#filtered_servers[@]}]}
     echo -e "${PREFIX} ${BOLD}- ${GREEN}Connecting to $selected_server...${NC}"
-    cs-console "$selected_server"
+    
+    current_dir="${PWD##*/}"
+    if [ "$current_dir" != "compile" ]; then
+        echo -e "${PREFIX} ${BOLD}- ${RED}Not in directory compile...${NC}"
+        exit 1
+    fi
+
+    if [ -f "xinu.xbin" ]; then
+        echo -e "${PREFIX} ${BOLD}- ${GREEN}File ${BOLD}'xinu.xbin' ${GREEN}exists in $(pwd).${NC}"
+    else
+        echo -e "${PREFIX} ${BOLD}- ${RED}Error: ${BOLD}'xinu.xbin' ${RED}not found in $(pwd).${NC}"
+        exit 1
+    fi
+    echo -e "${PREFIX} ${BOLD}- ${RED}Running autofill...${NC}"
+    expect -c "
+        #log_user 0
+        set timeout 20
+
+        spawn cs-console $server 
+        expect \"*connection '$server', class '$MODE', host 'xinuserver.cs.purdue.edu'*\"
+    
+        send \"\x00\"
+        after 500
+
+        expect \"(command-mode)*\"
+
+        send \"d\r\"
+        after 500
+
+        expect \"file:\"
+        send \"xinu.xbin\r\"
+        after 500
+
+        expect \"Using file: xinu.xbin\"
+
+        expect \"connection '${server}-dl', class 'DOWNLOAD', host 'xinuserver.cs.purdue.edu'\"
+        expect \"cp-download complete\"
+
+        send \"\x00\"
+        after 500
+
+        expect \"(command-mode)*\"
+
+        send \"p\r\"
+        after 500
+
+        expect \"connection '${server}-pc', class 'POWERCYCLE', host 'xinuserver.cs.purdue.edu'\"
+
+        interact
+    "
+    exit 0;
 }
 
 # Arguments
