@@ -8,15 +8,6 @@ PD: I did this project for fun and because I was bored and didn't want to do my 
 <img align="center" alt="Coding" width="1000" src="https://raw.githubusercontent.com/alesgsanudoo/alesgsanudoo/refs/heads/main/images/gifs/cs-connect/cc-command.gif">
 ---
 
-## Table of Contents 📑
-1. [Overview](#overview)
-2. [Features](#features)
-3. [Installation](#installation)
-4. [Protip](#protip)
-5. [Usage](#usage)
-
----
-
 ## Overview 🌟
 
 The **CS-CONNECT** script is a tool that helps you:
