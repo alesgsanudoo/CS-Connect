@@ -53,7 +53,7 @@ pullBrokenServers() {
         echo -e "${PREFIX} ${BOLD}- ${RED}Error:${NC} Failed to pull TA notes from ${YELLOW} $BROKEN_SERVERS_URL ${NC}" >&2
         return 1
     fi
-    local servers=$(echo "$html" | grep -i "Broken Backends" -A3 | grep -Eo 'galileo[0-9]+' | sort -u)
+    local servers=$(echo "$html" | awk '/Broken Backends/ {flag=1; next} /<\/ul>/ {flag=0} flag' | grep -Eo 'galileo[0-9]+' | sort -u)
 
     if [[ -z "$servers" ]]; then
         echo -e "${PREFIX} ${BOLD}- ${NC} No broken servers found in TA notes... ${NC}" >&2
