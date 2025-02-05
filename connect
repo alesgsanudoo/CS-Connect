@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# Color Settings
+# Color Settings - from https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
 RED="\033[0;31m"
 GREEN="\033[0;32m"
 YELLOW="\033[1;33m"
