@@ -12,10 +12,8 @@ PD: I did this project for fun and because I was bored and didn't want to do my 
 1. [Overview](#overview)
 2. [Features](#features)
 3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Configuration](#configuration)
-6. [Commands](#commands)
-7. [Contributing](#contributing)
+4. [Protip](#protip)
+5. [Usage](#usage)
 
 ---
 
