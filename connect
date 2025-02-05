@@ -14,7 +14,6 @@ NC="\033[0m"
 # Configuration/files
 BLACKLIST_FILE="$HOME/.cscblacklist"
 CONFIG_FILE="$HOME/.csconfig"
-MODE="quark"
 PREFIX="${BOLD_BLUE}CS-CONNECT${NC}"
 SCRIPT_NAME=$(basename "$0")
 SERVER_PREFIX="galileo"
@@ -138,7 +137,7 @@ reset_config() {
 }
 
 # Get all servers
-VALID_SERVERS=$(cs-status -c $MODE | awk 'NR>1 {print $1}')
+VALID_SERVERS=$(cs-status -c quark | awk 'NR>1 {print $1}')
 CACHED_SERVERS=($VALID_SERVERS)
 SERVER_NUMBERS=($(printf '%s\n' "${CACHED_SERVERS[@]}" | sed "s/^${SERVER_PREFIX}//" | sort -n))
 
@@ -207,7 +206,7 @@ EXAMPLES:
         ${SCRIPT_NAME} --set REFRESH_BROKEN=FALSE # Disable auto-updates
 
 
-VERSION 0.1 - Alex G
+VERSION 0.2 - Alex G
 EOF
 }
 
@@ -253,7 +252,7 @@ display_blacklist() {
 
 display_all() {
     echo -e "${PREFIX} ${BOLD}- ${GREEN}ENTIRE Server List${NC}"
-    cs-status -c $MODE 
+    cs-status -c quark 
 }
 
 # check that the server is valid
@@ -265,7 +264,7 @@ isValid() {
 # check if server is available
 isAvailable() {
     local server=$1
-    cs-status -c $MODE | awk -v s="$server" '$1 == s && /user= [ ]+time= / {print $1}' | grep -qxF "$server"
+    cs-status -c quark | awk -v s="$server" '$1 == s && /user= [ ]+time= / {print $1}' | grep -qxF "$server"
 }
 
 
@@ -401,7 +400,7 @@ connect_specific() {
         set timeout 20
 
         spawn cs-console $server 
-        expect \"*connection '$server', class '$MODE', host 'xinuserver.cs.purdue.edu'*\"
+        expect \"*connection '$server', class 'quark', host 'xinuserver.cs.purdue.edu'*\"
     
         send \"\x00\"
         after 500
@@ -437,7 +436,7 @@ connect_specific() {
 
 # Connect to a random xinu server
 connect_random() {
-    available_servers=$(cs-status -c $MODE | awk '/user= [ ]+time= / {print $1}')
+    available_servers=$(cs-status -c quark | awk '/user= [ ]+time= / {print $1}')
 
     blacklisted_servers=()
     [[ -f "$BLACKLIST_FILE" ]] && blacklisted_servers=($(cat "$BLACKLIST_FILE"))
@@ -475,7 +474,7 @@ connect_random() {
         set timeout 20
 
         spawn cs-console $selected_server 
-        expect \"*connection '$selected_server', class '$MODE', host 'xinuserver.cs.purdue.edu'*\"
+        expect \"*connection '$selected_server', class 'quark', host 'xinuserver.cs.purdue.edu'*\"
     
         send \"\x00\"
         after 500
