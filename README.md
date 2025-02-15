@@ -45,7 +45,7 @@ The **CS-CONNECT** script is a tool that helps you:
    ```bash
    chmod +x connect
    ```
-5. Run the script
+5. Run the script on xinu/compile
    ```bash
    ./connect
    ```
