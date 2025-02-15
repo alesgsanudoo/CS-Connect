@@ -47,7 +47,7 @@ The **CS-CONNECT** script is a tool that helps you:
    ```
 5. Run the script on xinu/compile
    ```bash
-   ./connect
+   ~/connect
    ```
 
 
