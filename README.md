@@ -66,7 +66,7 @@ vim/nano/nvim ~/.zshrc
   ```bash
   source .bashrc or .zshrc
   ``` 
-  Now, you can simply type `connect` to run the script!
+  Now, you can simply type `cc` to run the script!
 ---
 
 
